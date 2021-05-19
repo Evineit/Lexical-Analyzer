@@ -21,23 +21,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QFile file;
-    QTextStream io;
-    QString fileName;
-    fileName = QFileDialog::getOpenFileName(this,"Abrir archivo",tr("*.spes"));
-
+    QString fileName = QFileDialog::getOpenFileName(this,"Abrir archivo","~/",tr("Archivo Spes (*.spes)"));
     if (fileName.isEmpty()){
         return;
     }
-    file.setFileName(fileName);
-    file.open(QIODevice::ReadOnly|QIODevice::Text);
-    if (!file.isOpen()){
-        QMessageBox::critical(this, "Error ", file.errorString());
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly|QIODevice::Text)){
+        QMessageBox::warning(this, "Error ", file.errorString());
         return;
     }
-    io.setDevice(&file);
-    ui->textEdit->setText(io.readAll());
-    file.flush();
+    ui->textEdit->setText(file.readAll());
     file.close();
 }
 
