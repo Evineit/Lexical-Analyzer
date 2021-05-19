@@ -46,7 +46,7 @@
      <string>Guardar</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="analizarButton">
     <property name="geometry">
      <rect>
       <x>570</x>
@@ -69,7 +69,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Cancelar</string>
+     <string>Cerrar</string>
     </property>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
