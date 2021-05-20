@@ -14,11 +14,14 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    int relacionar(QChar);
 
 private slots:
     void on_pushButton_clicked();
 
     void on_pushButton_4_clicked();
+
+    void on_analizarButton_clicked();
 
 private:
     Ui::MainWindow *ui;

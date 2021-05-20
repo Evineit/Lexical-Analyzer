@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>0</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>440</x>
       <y>350</y>
       <width>80</width>
       <height>21</height>
@@ -36,7 +36,7 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>530</x>
       <y>350</y>
       <width>80</width>
       <height>21</height>
@@ -49,7 +49,7 @@
    <widget class="QPushButton" name="analizarButton">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>620</x>
       <y>350</y>
       <width>80</width>
       <height>21</height>
@@ -62,7 +62,7 @@
    <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>710</x>
       <y>350</y>
       <width>80</width>
       <height>21</height>
