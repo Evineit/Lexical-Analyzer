@@ -136,19 +136,12 @@ void MainWindow::on_analizarButton_clicked()
             token.append(sourceText[i]);
         }
         else if (state >= 100 && state <= 128){
-            if (state == 100){
-                if (std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords)){
-                    appendToken(state, token);
-                }else{
-                    appendToken(101, token);
-                }
-                token = "";
-                state = 0;
-            } else{
-                appendToken(state, token);
-                token = "";
-                state = 0;
+            if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
+                state = 101;
             }
+            appendToken(state, token);
+            token = "";
+            state = 0;
         } else if(state >= 500) {
             errorToken(state);
             return;
@@ -157,22 +150,13 @@ void MainWindow::on_analizarButton_clicked()
     // EOT
     if (!token.isEmpty()) {
         state = states[state][relacionar(QChar(10))];
-        qInfo() << "simbolo actual: EOT" << (int)QChar(10).unicode();
+        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado resultante:" << state;
         if (state >= 100 && state <= 128){
-            if (state == 100){
-                if (std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords)){
-                    appendToken(state, token);
-                }else{
-                    appendToken(101, token);
-                }
-                token = "";
-                state = 0;
-            } else{
-                appendToken(state, token);
-                token = "";
-                state = 0;
+            if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
+                state = 101;
             }
+            appendToken(state, token);
         } else if(state >= 500) {
             errorToken(state);
         }
