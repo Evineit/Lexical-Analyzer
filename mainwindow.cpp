@@ -42,10 +42,19 @@ MainWindow::~MainWindow()
 }
 
 int MainWindow::relacionar(QChar c){
-    if(c.isDigit())
+    if (c.isUpper())
+        return 0;
+    if (c.isLower())
+        return 1;
+    if (c.isDigit())
         return 2;
-    if((int)c.unicode() == 10)
-        return 27;
+
+    switch (c.unicode()) {
+        case('.'):
+            return 4;
+        case(10):
+            return 27;
+    }
     return 0;
 }
 
@@ -72,27 +81,50 @@ void MainWindow::on_pushButton_4_clicked()
 
 void MainWindow::on_analizarButton_clicked()
 {
+    ui->textEdit_2->clear();
+    ui->textEdit_3->clear();
     int state = 0;
     QString token = "";
     QString sourceText = ui->textEdit->toPlainText();
     for (int i = 0;i < sourceText.size() ; i++ ) {
+        qInfo() << "Link:" << relacionar(sourceText[i]);
         state = states[state][relacionar(sourceText[i])];
-        qInfo() << "Simbolo actual: "<< sourceText[i] <<(int)sourceText[i].unicode();
-        qInfo() << "Estado relacionar:" << state;
-        if (state != 102){
+        qInfo() << "Token actual: " << token;
+        qInfo() << "Simbolo actual: " << sourceText[i] << (int)sourceText[i].unicode();
+        qInfo() << "Estado resultante:" << state<< "\n";
+        if (state == 0)
+            continue;
+        if (!(state == 102 || state == 103)){
             token.append(sourceText[i]);
         }
         if (state == 102){
             ui->textEdit_2->append("Estado de aceptacion 102: "+token+", Entero");
             token = "";
             state = 0;
+        } else if(state == 103){
+            ui->textEdit_2->append("Estado de aceptacion 103: "+token+", Real");
+            token = "";
+            state = 0;
+        } else if(state >= 500) {
+            ui->textEdit_2->setText("Error con estado: "+QString::number(state));
         }
     }
+    // EOT
     if (!token.isEmpty()) {
         state = states[state][relacionar(QChar(10))];
-        qInfo() << "simbolo actual: EOF" << (int)QChar(10).unicode();
-        qInfo() << "Estado relacionar:" << state;
-        ui->textEdit_2->append("Estado de aceptacion 102: "+token+", Entero");
+        qInfo() << "simbolo actual: EOT" << (int)QChar(10).unicode();
+        qInfo() << "Estado resultante:" << state;
+        switch (state) {
+            case(102):
+                ui->textEdit_2->append("Estado de aceptacion 102: "+token+", Entero");
+            break;
+            case(103):
+                ui->textEdit_2->append("Estado de aceptacion 103: "+token+", Real");
+            break;
+            case(500):
+                ui->textEdit_3->setText("Error con estado: "+QString::number(state));
+            break;
+        }
     }
 }
 
