@@ -13,7 +13,7 @@ int states[20][31] = {
     {2, 2, 2, 2, 101, 2, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101},
     {102, 102, 3, 102, 4, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102},
     {500, 500, 5, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500},
-    {103, 103, 5, 103, 103, 103, 6, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103},
+    {103, 103, 5, 103, 103, 6, 6, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103},
     {501, 501, 8, 501, 501, 501, 501, 7, 7, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501, 501},
     {502, 502, 8, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502},
     {104, 104, 8, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104},
@@ -42,9 +42,9 @@ MainWindow::~MainWindow()
 }
 
 int MainWindow::relacionar(QChar c){
-    if (c.isUpper())
+    if (c.isUpper() && c != 'E')
         return 0;
-    if (c.isLower())
+    if (c.isLower() && c != 'e')
         return 1;
     if (c.isDigit())
         return 2;
@@ -52,6 +52,14 @@ int MainWindow::relacionar(QChar c){
     switch (c.unicode()) {
         case('.'):
             return 4;
+        case('E'):
+            return 5;
+        case('e'):
+            return 6;
+        case('+'):
+            return 7;
+        case('-'):
+            return 8;
         case(10):
             return 27;
     }
@@ -65,6 +73,9 @@ void MainWindow::appendToken(int state, QString token){
         break;
         case(103):
             ui->textEdit_2->append("Estado de aceptacion 103: "+token+", Real");
+        break;
+        case(104):
+            ui->textEdit_2->append("Estado de aceptacion 104: "+token+", N.Cientifica");
         break;
     }
 }
@@ -113,7 +124,13 @@ void MainWindow::on_analizarButton_clicked()
             token = "";
             state = 0;
         } else if(state >= 500) {
-            ui->textEdit_3->setText("Error con estado: "+QString::number(state));
+            if (state == 500)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
+            else if (state == 501)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+            else if (state == 502)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+
             return;
         }
     }
@@ -125,7 +142,12 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state <= 128){
             appendToken(state, token);
         } else if(state >= 500) {
-            ui->textEdit_3->setText("Error con estado: "+QString::number(state));
+            if (state == 500)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
+            else if (state == 501)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+            else if (state == 502)
+                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
         }
     }
 }
