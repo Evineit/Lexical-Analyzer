@@ -15,6 +15,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     int relacionar(QChar);
+    void appendToken(int, QString);
 
 private slots:
     void on_pushButton_clicked();
