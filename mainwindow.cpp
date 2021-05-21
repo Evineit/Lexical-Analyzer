@@ -9,7 +9,7 @@
 
 int states[20][31] = {
     {2, 1, 3, 506, 506, 2, 1, 105, 106, 107, 108, 128, 9, 10, 11, 12, 13, 14, 15, 119, 120, 121, 122, 123, 124, 17, 19, 0, 0, 0, 506},
-    {2, 1, 2, 2, 100, 2, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+    {2, 1, 2, 2, 100, 2, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
     {2, 2, 2, 2, 101, 2, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101},
     {102, 102, 3, 102, 4, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102},
     {500, 500, 5, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500},
@@ -28,6 +28,7 @@ int states[20][31] = {
     {17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 17, 17, 17, 17, 17},
     {126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 17, 126, 126, 126, 126, 126},
     {19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 127, 19, 19, 19}};
+QString reservedWords [32] = {"class", "endclass", "int", "float", "char", "string", "bool", "if", "else", "elseif", "endif", "do", "eval", "enddo", "while", "endwhile", "read", "write", "def", "as", "for", "endfor", "private", "public", "protected", "library", "func", "endfunc", "main", "endmain", "true", "false"};
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -68,6 +69,12 @@ int MainWindow::relacionar(QChar c){
 
 void MainWindow::appendToken(int state, QString token){
     switch (state) {
+        case(100):
+            ui->textEdit_2->append("Estado de aceptacion 100: "+token+", Palabra reservada");
+        break;
+        case(101):
+            ui->textEdit_2->append("Estado de aceptacion 101: "+token+", Identificador");
+        break;
         case(102):
             ui->textEdit_2->append("Estado de aceptacion 102: "+token+", Entero");
         break;
@@ -129,9 +136,19 @@ void MainWindow::on_analizarButton_clicked()
             token.append(sourceText[i]);
         }
         else if (state >= 100 && state <= 128){
-            appendToken(state, token);
-            token = "";
-            state = 0;
+            if (state == 100){
+                if (std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords)){
+                    appendToken(state, token);
+                }else{
+                    appendToken(101, token);
+                }
+                token = "";
+                state = 0;
+            } else{
+                appendToken(state, token);
+                token = "";
+                state = 0;
+            }
         } else if(state >= 500) {
             errorToken(state);
             return;
@@ -143,7 +160,19 @@ void MainWindow::on_analizarButton_clicked()
         qInfo() << "simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado resultante:" << state;
         if (state >= 100 && state <= 128){
-            appendToken(state, token);
+            if (state == 100){
+                if (std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords)){
+                    appendToken(state, token);
+                }else{
+                    appendToken(101, token);
+                }
+                token = "";
+                state = 0;
+            } else{
+                appendToken(state, token);
+                token = "";
+                state = 0;
+            }
         } else if(state >= 500) {
             errorToken(state);
         }
