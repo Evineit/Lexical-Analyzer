@@ -64,28 +64,37 @@ int MainWindow::relacionar(QChar c){
             return 7;
         case('-'):
             return 8;
+        case('\''):
+            return 18;
+        case(','):
+            return 24;
         case(10):
             return 27;
+        case(32):
+            return 29;
     }
-    return 27;
+    return 30;
 }
 
 void MainWindow::appendToken(int state, QString token){
     switch (state) {
         case(100):
-            ui->textEdit_2->append("Estado de aceptacion 100: "+token+", Palabra reservada");
+            ui->textEdit_2->append("Estado de aceptacion 100: "+token+" -> Palabra reservada");
         break;
         case(101):
-            ui->textEdit_2->append("Estado de aceptacion 101: "+token+", Identificador");
+            ui->textEdit_2->append("Estado de aceptacion 101: "+token+" -> Identificador");
         break;
         case(102):
-            ui->textEdit_2->append("Estado de aceptacion 102: "+token+", Entero");
+            ui->textEdit_2->append("Estado de aceptacion 102: "+token+" -> Entero");
         break;
         case(103):
-            ui->textEdit_2->append("Estado de aceptacion 103: "+token+", Real");
+            ui->textEdit_2->append("Estado de aceptacion 103: "+token+" -> Real");
         break;
         case(104):
-            ui->textEdit_2->append("Estado de aceptacion 104: "+token+", N.Cientifica");
+            ui->textEdit_2->append("Estado de aceptacion 104: "+token+" -> N.Cientifica");
+        break;
+        case(125):
+            ui->textEdit_2->append("Estado de aceptacion 125: "+token+" -> Caracter");
         break;
     }
 }
@@ -97,6 +106,10 @@ void MainWindow::errorToken(int state){
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
     else if (state == 502)
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+    else if (state == 505)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter vacio");
+    else if (state == 507)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter debe terminar en caracter ' y tener longitud de 1 caracter");
     else if (state == 508)
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Identificador no puede terminar en '_'");
 }
@@ -130,8 +143,10 @@ void MainWindow::on_analizarButton_clicked()
     QString token = "";
     QString sourceText = ui->textEdit->toPlainText();
     for (int i = 0;i < sourceText.size() ; i++ ) {
-        state = states[state][relacionar(sourceText[i])];
-        qInfo() << "Link:" << relacionar(sourceText[i]);
+        qInfo() << "Estado actual: " << state;
+        if (state <100)
+            state = states[state][relacionar(sourceText[i])];
+//        qInfo() << "Link:" << relacionar(sourceText[i]);
         qInfo() << "Token actual: " << token;
         qInfo() << "Simbolo actual: " << sourceText[i] << (int)sourceText[i].unicode();
         qInfo() << "Estado resultante:" << state<< "\n";
@@ -140,13 +155,26 @@ void MainWindow::on_analizarButton_clicked()
         else if (state <= 20){
             token.append(sourceText[i]);
         }
-        else if (state >= 100 && state <= 128){
+        if (state >= 100 && state <= 128){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
+            } else if (state == 125){
+                token.append(sourceText[i]);
+                appendToken(state, token);
+                token = "";
+                state = 0;
+                continue;
             }
             appendToken(state, token);
-            token = "";
-            state = 0;
+            // Set current char as the start of a new token if this was the cause of a final state
+            if (relacionar(sourceText[i]) < 27){
+                token = sourceText[i];
+                state = states[0][relacionar(sourceText[i])];
+            }
+            else {
+                token = "";
+                state = 0;
+            }
         } else if(state >= 500) {
             errorToken(state);
             return;
