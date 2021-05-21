@@ -80,6 +80,15 @@ void MainWindow::appendToken(int state, QString token){
     }
 }
 
+void MainWindow::errorToken(int state){
+    if (state == 500)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
+    else if (state == 501)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+    else if (state == 502)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,"Abrir archivo","~/",tr("Archivo Spes (*.spes)"));
@@ -116,21 +125,15 @@ void MainWindow::on_analizarButton_clicked()
         qInfo() << "Estado resultante:" << state<< "\n";
         if (state == 0)
             continue;
-        if (!(state >= 100 && state <= 128)){
+        else if (!(state >= 100 && state <= 128)){
             token.append(sourceText[i]);
         }
-        if (state >= 100 && state <= 128){
+        else if (state >= 100 && state <= 128){
             appendToken(state, token);
             token = "";
             state = 0;
         } else if(state >= 500) {
-            if (state == 500)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
-            else if (state == 501)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
-            else if (state == 502)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
-
+            errorToken(state);
             return;
         }
     }
@@ -142,12 +145,7 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state <= 128){
             appendToken(state, token);
         } else if(state >= 500) {
-            if (state == 500)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
-            else if (state == 501)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
-            else if (state == 502)
-                 ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+            errorToken(state);
         }
     }
 }

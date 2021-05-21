@@ -16,6 +16,7 @@ public:
     ~MainWindow();
     int relacionar(QChar);
     void appendToken(int, QString);
+    void errorToken(int);
 
 private slots:
     void on_pushButton_clicked();
