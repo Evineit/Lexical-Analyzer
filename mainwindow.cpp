@@ -74,6 +74,12 @@ int MainWindow::relacionar(QChar c){
             return 10;
         case('%'):
             return 11;
+        case('='):
+            return 12;
+        case('<'):
+            return 13;
+        case('>'):
+            return 14;
         case('!'):
             return 15;
         case('&'):
@@ -122,6 +128,24 @@ void MainWindow::appendToken(int state, QString token){
         break;
         case(108):
             ui->textEdit_2->append("Estado de aceptacion 108: "+token+" -> Division");
+        break;
+        case(110):
+            ui->textEdit_2->append("Estado de aceptacion 110: "+token+" -> Igual que");
+        break;
+        case(111):
+            ui->textEdit_2->append("Estado de aceptacion 111: "+token+" -> Menor que");
+        break;
+        case(112):
+            ui->textEdit_2->append("Estado de aceptacion 112: "+token+" -> Menor o igual que");
+        break;
+        case(113):
+            ui->textEdit_2->append("Estado de aceptacion 113: "+token+" -> Mayor");
+        break;
+        case(114):
+            ui->textEdit_2->append("Estado de aceptacion 114: "+token+" -> Mayor o igual que");
+        break;
+        case(115):
+            ui->textEdit_2->append("Estado de aceptacion 115: "+token+" -> Diferente que");
         break;
         case(116):
             ui->textEdit_2->append("Estado de aceptacion 116: "+token+" -> Negacion Logica NOT");
@@ -216,7 +240,10 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
-            } else if (state == 125 || state ==108 || (state >= 128 && state <= 131) || (state >= 117 && state <= 118)){
+            } else if (
+                state == 125 || state ==108 || (state >= 128 && state <= 131) || (state >= 117 && state <= 118) ||
+                state == 110 || state == 112 || state == 114 || state == 115
+                ){
                 token.append(sourceText[i]);
                 appendToken(state, token);
                 token = "";
