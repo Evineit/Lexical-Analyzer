@@ -64,6 +64,12 @@ int MainWindow::relacionar(QChar c){
             return 7;
         case('-'):
             return 8;
+        case('*'):
+            return 9;
+        case('/'):
+            return 10;
+        case('%'):
+            return 11;
         case('\''):
             return 18;
         case(','):
@@ -95,11 +101,26 @@ void MainWindow::appendToken(int state, QString token){
         case(104):
             ui->textEdit_2->append("Estado de aceptacion 104: "+token+" -> N.Cientifica");
         break;
+        case(105):
+            ui->textEdit_2->append("Estado de aceptacion 105: "+token+" -> Suma");
+        break;
+        case(106):
+            ui->textEdit_2->append("Estado de aceptacion 106: "+token+" -> Resta");
+        break;
+        case(107):
+            ui->textEdit_2->append("Estado de aceptacion 107: "+token+" -> Multiplicacion");
+        break;
+        case(108):
+            ui->textEdit_2->append("Estado de aceptacion 108: "+token+" -> Division");
+        break;
         case(125):
             ui->textEdit_2->append("Estado de aceptacion 125: "+token+" -> Caracter");
         break;
         case(126):
             ui->textEdit_2->append("Estado de aceptacion 126: "+token+" -> Cadena");
+        break;
+        case(128):
+            ui->textEdit_2->append("Estado de aceptacion 128: "+token+" -> Modulo");
         break;
     }
 }
@@ -163,7 +184,7 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state <= 128){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
-            } else if (state == 125){
+            } else if (state == 125 || (state >= 105 && state <=108) || 128){
                 token.append(sourceText[i]);
                 appendToken(state, token);
                 token = "";
@@ -187,12 +208,14 @@ void MainWindow::on_analizarButton_clicked()
     }
     // EOT
     if (!token.isEmpty()) {
-        state = states[state][relacionar(QChar(10))];
-        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
-        qInfo() << "Estado resultante:" << state;
-        if (state == 16) {
-            state = 507;
+        if (state < 100){
+            state = states[state][relacionar(QChar(10))];
+            if (state == 16) {
+                state = 507;
+            }
         }
+        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
+        qInfo() << "Estado final:" << state;
         if (state >= 100 && state <= 128){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
