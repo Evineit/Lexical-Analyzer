@@ -7,7 +7,7 @@
 #include "QTextStream"
 #include "cctype"
 
-int states[26][31] = {
+int states[28][31] = {
 	{2, 1, 3, 506, 506, 2, 1, 21, 22, 23, 24, 25, 9, 10, 11, 12, 13, 14, 15, 119, 120, 121, 122, 123, 124, 17, 19, 0, 0, 0, 506},
 	{2, 1, 2, 20, 100, 2, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
 	{2, 2, 2, 20, 101, 2, 1, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101},
@@ -32,10 +32,12 @@ int states[26][31] = {
 	{105, 105, 105, 105, 105, 105, 105, 129, 105, 105, 105, 105, 132, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105},
 	{106, 106, 106, 106, 106, 106, 106, 106, 130, 106, 106, 106, 133, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106},
 	{107, 107, 107, 107, 107, 107, 107, 107, 107, 131, 107, 107, 134, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107},
-	{108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 135, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108},
-	{128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 136, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128}};
+	{108, 108, 108, 108, 108, 108, 108, 108, 108, 26, 108, 108, 135, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108},
+	{128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 136, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128},
+	{26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26},
+	{26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 137, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26}};
 
-int autoConclusiveStates [] = {110,112,114,115,117,118,119,120,121,122,123,124,125,129,130,131,132,133,134,135,136};
+int autoConclusiveStates [] = {110,112,114,115,117,118,119,120,121,122,123,124,125,129,130,131,132,133,134,135,136,137};
 QString reservedWords [32] = {"class", "endclass", "int", "float", "char", "string", "bool", "if", "else", "elseif", "endif", "do", "eval", "enddo", "while", "endwhile", "read", "write", "def", "as", "for", "endfor", "private", "public", "protected", "library", "func", "endfunc", "main", "endmain", "true", "false"};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -105,6 +107,8 @@ int MainWindow::relacionar(QChar c){
             return 24;
         case('\"'):
             return 25;
+        case('#'):
+            return 26;
         case(10):
             return 27;
         case(32):
@@ -196,6 +200,9 @@ void MainWindow::appendToken(int state, QString token){
         case(126):
             ui->textEdit_2->append("Estado de aceptacion 126: "+token+" -> Cadena");
         break;
+        case(127):
+            ui->textEdit_2->append("Estado de aceptacion 127: "+token+" -> Comentario de linea");
+        break;
         case(128):
             ui->textEdit_2->append("Estado de aceptacion 128: "+token+" -> Modulo");
         break;
@@ -222,6 +229,9 @@ void MainWindow::appendToken(int state, QString token){
         break;
         case(136):
             ui->textEdit_2->append("Estado de aceptacion 136: "+token+" -> Modulo y asignacion");
+        break;
+        case(137):
+            ui->textEdit_2->append("Estado de aceptacion 137: "+token+" -> Comentario de bloque");
         break;
     }
 }
@@ -315,13 +325,14 @@ void MainWindow::on_analizarButton_clicked()
     if (!token.isEmpty()) {
         if (state < 100){
             state = states[state][relacionar(QChar(10))];
-            if (state == 16) {
+            if (state == 16) 
                 state = 507;
-            }
+            else if (state == 26 || state == 27 )
+                state = 137;
         }
         qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado final:" << state;
-        if (state >= 100 && state <= 128){
+        if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
             }
