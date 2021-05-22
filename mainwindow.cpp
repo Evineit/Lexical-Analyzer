@@ -146,7 +146,7 @@ void MainWindow::on_analizarButton_clicked()
         qInfo() << "Estado actual: " << state;
         if (state <100)
             state = states[state][relacionar(sourceText[i])];
-//        qInfo() << "Link:" << relacionar(sourceText[i]);
+        qInfo() << "Link:" << relacionar(sourceText[i]);
         qInfo() << "Token actual: " << token;
         qInfo() << "Simbolo actual: " << sourceText[i] << (int)sourceText[i].unicode();
         qInfo() << "Estado resultante:" << state<< "\n";
@@ -185,6 +185,9 @@ void MainWindow::on_analizarButton_clicked()
         state = states[state][relacionar(QChar(10))];
         qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado resultante:" << state;
+        if (state == 16) {
+            state = 507;
+        }
         if (state >= 100 && state <= 128){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
