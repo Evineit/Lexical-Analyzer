@@ -68,6 +68,8 @@ int MainWindow::relacionar(QChar c){
             return 18;
         case(','):
             return 24;
+        case('\"'):
+            return 25;
         case(10):
             return 27;
         case(32):
@@ -95,6 +97,9 @@ void MainWindow::appendToken(int state, QString token){
         break;
         case(125):
             ui->textEdit_2->append("Estado de aceptacion 125: "+token+" -> Caracter");
+        break;
+        case(126):
+            ui->textEdit_2->append("Estado de aceptacion 126: "+token+" -> Cadena");
         break;
     }
 }
