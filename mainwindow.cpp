@@ -35,7 +35,7 @@ int states[26][31] = {
 	{108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 135, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108},
 	{128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 136, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128}};
 
-int autoConclusiveStates [] = {110,112,114,115,117,118,125,129,130,131,132,133,134,135,136};
+int autoConclusiveStates [] = {110,112,114,115,117,118,119,120,121,122,123,124,125,129,130,131,132,133,134,135,136};
 QString reservedWords [32] = {"class", "endclass", "int", "float", "char", "string", "bool", "if", "else", "elseif", "endif", "do", "eval", "enddo", "while", "endwhile", "read", "write", "def", "as", "for", "endfor", "private", "public", "protected", "library", "func", "endfunc", "main", "endmain", "true", "false"};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -91,6 +91,16 @@ int MainWindow::relacionar(QChar c){
             return 17;
         case('\''):
             return 18;
+        case('('):
+            return 19;
+        case(')'):
+            return 20;
+        case('['):
+            return 21;
+        case(']'):
+            return 22;
+        case(';'):
+            return 23;
         case(','):
             return 24;
         case('\"'):
@@ -161,6 +171,24 @@ void MainWindow::appendToken(int state, QString token){
         break;
         case(118):
             ui->textEdit_2->append("Estado de aceptacion 118: "+token+" -> O Logico OR");
+        break;
+        case(119):
+            ui->textEdit_2->append("Estado de aceptacion 119: "+token+" -> Parentesis que abre");
+        break;
+        case(120):
+            ui->textEdit_2->append("Estado de aceptacion 120: "+token+" -> Parentesis que cierra");
+        break;
+        case(121):
+            ui->textEdit_2->append("Estado de aceptacion 121: "+token+" -> Corchete que abre");
+        break;
+        case(122):
+            ui->textEdit_2->append("Estado de aceptacion 122: "+token+" -> Corchete que cierra");
+        break;
+        case(123):
+            ui->textEdit_2->append("Estado de aceptacion 123: "+token+" -> Punto y coma");
+        break;
+        case(124):
+            ui->textEdit_2->append("Estado de aceptacion 124: "+token+" -> Coma");
         break;
         case(125):
             ui->textEdit_2->append("Estado de aceptacion 125: "+token+" -> Caracter");
