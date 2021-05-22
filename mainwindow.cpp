@@ -74,6 +74,12 @@ int MainWindow::relacionar(QChar c){
             return 10;
         case('%'):
             return 11;
+        case('!'):
+            return 15;
+        case('&'):
+            return 16;
+        case('|'):
+            return 17;
         case('\''):
             return 18;
         case(','):
@@ -117,6 +123,15 @@ void MainWindow::appendToken(int state, QString token){
         case(108):
             ui->textEdit_2->append("Estado de aceptacion 108: "+token+" -> Division");
         break;
+        case(116):
+            ui->textEdit_2->append("Estado de aceptacion 116: "+token+" -> Negacion Logica NOT");
+        break;
+        case(117):
+            ui->textEdit_2->append("Estado de aceptacion 117: "+token+" -> Y Logico AND");
+        break;
+        case(118):
+            ui->textEdit_2->append("Estado de aceptacion 118: "+token+" -> O Logico OR");
+        break;
         case(125):
             ui->textEdit_2->append("Estado de aceptacion 125: "+token+" -> Caracter");
         break;
@@ -145,6 +160,10 @@ void MainWindow::errorToken(int state){
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
     else if (state == 502)
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+    else if (state == 503)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador AND incompleto");
+    else if (state == 504)
+         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador OR incompleto");
     else if (state == 505)
          ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter vacio");
     else if (state == 507)
@@ -197,7 +216,7 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
-            } else if (state == 125 || state ==108 || (state >= 128 && state <= 131)){
+            } else if (state == 125 || state ==108 || (state >= 128 && state <= 131) || (state >= 117 && state <= 118)){
                 token.append(sourceText[i]);
                 appendToken(state, token);
                 token = "";
