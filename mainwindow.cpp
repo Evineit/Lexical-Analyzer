@@ -32,7 +32,7 @@ int states[24][31] = {
 	{105, 105, 105, 105, 105, 105, 105, 129, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105},
 	{106, 106, 106, 106, 106, 106, 106, 106, 130, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106},
 	{107, 107, 107, 107, 107, 107, 107, 107, 107, 131, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107, 107}};
-
+int autoConclusiveStates [] = {108,110,112,114,115,117,118,125,128,129,130,131};
 QString reservedWords [32] = {"class", "endclass", "int", "float", "char", "string", "bool", "if", "else", "elseif", "endif", "do", "eval", "enddo", "while", "endwhile", "read", "write", "def", "as", "for", "endfor", "private", "public", "protected", "library", "func", "endfunc", "main", "endmain", "true", "false"};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -240,10 +240,7 @@ void MainWindow::on_analizarButton_clicked()
         if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
                 state = 101;
-            } else if (
-                state == 125 || state ==108 || (state >= 128 && state <= 131) || (state >= 117 && state <= 118) ||
-                state == 110 || state == 112 || state == 114 || state == 115
-                ){
+            } else if (std::find(std::begin(autoConclusiveStates), std::end(autoConclusiveStates), state) != std::end(autoConclusiveStates)){
                 token.append(sourceText[i]);
                 appendToken(state, token);
                 token = "";
