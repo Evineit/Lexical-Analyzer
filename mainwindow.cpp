@@ -111,6 +111,8 @@ int MainWindow::relacionar(QChar c){
             return 26;
         case(10):
             return 27;
+        case('\t'):
+            return 28;
         case(32):
             return 29;
     }
@@ -341,5 +343,22 @@ void MainWindow::on_analizarButton_clicked()
             errorToken(state);
         }
     }
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Guardar archivo","", tr("Archivo Spes (*.spes)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly|QIODevice::Text)){
+        QMessageBox::warning(this, "No se pudo abrir el archivo ", file.errorString());
+        return;
+    }
+    QTextStream out(&file);
+    out << ui->textEdit->toPlainText();
+    file.close();
 }
 
