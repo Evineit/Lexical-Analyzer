@@ -7,8 +7,8 @@
 #include "QTextStream"
 #include "cctype"
 
-int states[28][31] = {
-	{2, 1, 3, 506, 506, 2, 1, 21, 22, 23, 24, 25, 9, 10, 11, 12, 13, 14, 15, 119, 120, 121, 122, 123, 124, 17, 19, 0, 0, 0, 506},
+int states[29][31] = {
+	{2, 1, 3, 506, 28, 2, 1, 21, 22, 23, 24, 25, 9, 10, 11, 12, 13, 14, 15, 119, 120, 121, 122, 123, 124, 17, 19, 0, 0, 0, 506},
 	{2, 1, 2, 20, 100, 2, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
 	{2, 2, 2, 20, 101, 2, 1, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101},
 	{102, 102, 3, 102, 4, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102},
@@ -35,9 +35,10 @@ int states[28][31] = {
 	{108, 108, 108, 108, 108, 108, 108, 108, 108, 26, 108, 108, 135, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108},
 	{128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 136, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128},
 	{26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26},
-	{26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 137, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26}};
+	{26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 137, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26},
+	{506, 506, 506, 506, 138, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506, 506}};
 
-int autoConclusiveStates [] = {110,112,114,115,117,118,119,120,121,122,123,124,125,129,130,131,132,133,134,135,136,137};
+int autoConclusiveStates [] = {110,112,114,115,117,118,119,120,121,122,123,124,125,129,130,131,132,133,134,135,136,137,138};
 QString reservedWords [32] = {"class", "endclass", "int", "float", "char", "string", "bool", "if", "else", "elseif", "endif", "do", "eval", "enddo", "while", "endwhile", "read", "write", "def", "as", "for", "endfor", "private", "public", "protected", "library", "func", "endfunc", "main", "endmain", "true", "false"};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -235,26 +236,33 @@ void MainWindow::appendToken(int state, QString token){
         case(137):
             ui->textEdit_2->append("Estado de aceptacion 137: "+token+" -> Comentario de bloque");
         break;
+        case(138):
+            ui->textEdit_2->append("Estado de aceptacion 138: "+token+" -> Doble punto");
+        break;
     }
 }
 
 void MainWindow::errorToken(int state){
     if (state == 500)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Real incompleto");
     else if (state == 501)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
     else if (state == 502)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Notacion cientifica incompleta");
     else if (state == 503)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador AND incompleto");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador AND incompleto");
     else if (state == 504)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador OR incompleto");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Operador OR incompleto");
     else if (state == 505)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter vacio");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter vacio");
+    else if (state == 506)
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Inicio invalido de token");
     else if (state == 507)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter debe terminar en caracter ' y tener longitud de 1 caracter");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Caracter debe terminar en caracter ' y tener longitud de 1 caracter");
     else if (state == 508)
-         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Identificador no puede terminar en '_'");
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Identificador no puede terminar en '_'");
+    else if (state == 509)
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Comentario de bloque /* sin terminar");
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -327,10 +335,10 @@ void MainWindow::on_analizarButton_clicked()
     if (!token.isEmpty()) {
         if (state < 100){
             state = states[state][relacionar(QChar(10))];
-            if (state == 16) 
+            if (state == 16)
                 state = 507;
             else if (state == 26 || state == 27 )
-                state = 137;
+                state = 509;
         }
         qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado final:" << state;
