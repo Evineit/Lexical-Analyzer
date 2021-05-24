@@ -263,6 +263,8 @@ void MainWindow::errorToken(int state){
         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Identificador no puede terminar en '_'");
     else if (state == 509)
         ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" Comentario de bloque /* sin terminar");
+    else if (state == 510)
+        ui->textEdit_3->setText("Error con estado: "+QString::number(state)+" String sin terminar");
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -293,14 +295,14 @@ void MainWindow::on_analizarButton_clicked()
     int state = 0;
     QString token = "";
     QString sourceText = ui->textEdit->toPlainText();
-    for (int i = 0;i < sourceText.size() ; i++ ) {
+    for (int i = 0; i < sourceText.size(); i++ ) {
         qInfo() << "Estado actual: " << state;
-        if (state <100)
+        if (state < 100)
             state = states[state][relacionar(sourceText[i])];
         qInfo() << "Link:" << relacionar(sourceText[i]);
         qInfo() << "Token actual: " << token;
         qInfo() << "Simbolo actual: " << sourceText[i] << (int)sourceText[i].unicode();
-        qInfo() << "Estado resultante:" << state<< "\n";
+        qInfo() << "Estado resultante:" << state << "\n";
         if (state == 0)
             continue;
         else if (state < 100){
@@ -337,10 +339,12 @@ void MainWindow::on_analizarButton_clicked()
             state = states[state][relacionar(QChar(10))];
             if (state == 16)
                 state = 507;
+            else if ((state == 17 || state == 18) && (token.size()==1 || !token.endsWith('\"')))
+                state = 510;
             else if (state == 26 || state == 27 )
                 state = 509;
         }
-        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
+        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();ñ
         qInfo() << "Estado final:" << state;
         if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
