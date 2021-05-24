@@ -344,7 +344,7 @@ void MainWindow::on_analizarButton_clicked()
             else if (state == 26 || state == 27 )
                 state = 509;
         }
-        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();ñ
+        qInfo() << "Simbolo actual: EOT" << (int)QChar(10).unicode();
         qInfo() << "Estado final:" << state;
         if (state >= 100 && state < 500){
             if (state == 100 && !(std::find(std::begin(reservedWords), std::end(reservedWords), token) != std::end(reservedWords))){
